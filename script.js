@@ -1,10 +1,6 @@
 const elementContainer = document.getElementById("container-elements");
 
-const inputText = document.getElementById("input-task");
-
 const btnAddTask = document.getElementById("btn-addTask");
-
-const containerError = document.getElementById("container-error");
 
 btnAddTask.addEventListener("click", addTask);
 
@@ -15,30 +11,40 @@ function showTasks(){
     tasks.forEach(task => {
         taskCardStructure = createTaskCardStructure(task);
         elementContainer.innerHTML += taskCardStructure;
+        checkboxTask(task);
     });
 };
 showTasks();
 
 function addTask(){
-    if(!verifyInputText()){
+    const inputText = document.getElementById('input-task');
+    const containerInput = document.getElementById("container-input");
+    if(!verifyInputText(inputText, containerInput)){
         return;
     }    
-    const taskData = {"id": generationID(), "name": inputText.value};
+    const taskData = {"id": generationID(), "name": inputText.value, "checked": false};
     saveTask(taskData);
     inputText.value = "";
     showTasks();
 }
 
-function verifyInputText(){
+function verifyInputText(inputText, containerToAppend, id = ''){
+    existingError = document.getElementById(`container-card-input-error-${id}`);
+    if (existingError) {
+        existingError.remove();
+    }
+    console.log(containerToAppend, inputText, id);
     if (inputText.value === "") {
-        showErrorMessageInInputText();
+        let containerError = document.createElement('div');
+        containerError.id = `container-card-input-error-${id}`;
+        containerToAppend.appendChild(containerError);
+        showErrorMessageInInputText(containerError);
         return false;
     }
-    containerError.innerHTML = "";
     return true;
 }
 
-function showErrorMessageInInputText(){
+function showErrorMessageInInputText(containerError){
     containerError.innerHTML = "";
     let emptyTaskError = document.createElement('span');
     emptyTaskError.textContent = "*O nome da Tarefa não foi Preenchido.";
@@ -61,11 +67,49 @@ function deleteTask(id){
 }
 
 function editTask(id){
-    let tasks = JSON.parse(localStorage.getItem("tasks"));
-    let editTask = tasks.filter((task) => {
+    replaceLabelToInput(id);
+    replaceButton({"id":id,"msgHtml":"Salvar","button":"edit","nameClass":"edit-btn","signal":saveModifiedTask});
+    replaceButton({"id":id,"msgHtml":"Cancelar","button":"delete","nameClass":"delete-btn","signal":cancelModifiedTask});
+}
+
+function replaceLabelToInput(id){
+    let taskEditInput = document.createElement('input');
+    taskEditInput.className = 'task-edit-input';
+    taskEditInput.placeholder = 'Novo Nome para a Tarefa';
+    taskEditInput.id = `task-input-${id}`;
+    let taskEditLabel = document.getElementById(`task-${id}`);
+    taskEditInput.value = taskEditLabel.textContent;
+    taskEditLabel.parentNode.replaceChild(taskEditInput, taskEditLabel);
+    taskEditInput.focus();
+    taskEditInput.select();
+}
+
+function replaceButton({id, msgHtml, button,nameClass, signal}){
+    let taskModifiedBtn = document.createElement('button');
+    taskModifiedBtn.onclick = () => signal(id);
+    taskModifiedBtn.innerHTML = msgHtml;
+    taskModifiedBtn.className = nameClass;
+    let taskReplaceBtn = document.getElementById(`task-${button}-btn-${id}`)
+    taskReplaceBtn.parentNode.replaceChild(taskModifiedBtn,taskReplaceBtn);
+}
+
+function saveModifiedTask(id){
+    let tasks = JSON.parse(localStorage.getItem('tasks'));
+    let taskIndex = tasks.findIndex((task) =>{
         return task.id === id;
     });
-    console.log(editTask);
+    let newTaskName = document.getElementById(`task-input-${id}`);
+    let containerErrorToAppend = document.getElementById(`container-card-input-${id}`);
+    if (!verifyInputText(newTaskName,containerErrorToAppend,id)) {
+        return;
+    }
+    tasks[taskIndex].name = newTaskName.value;
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+    showTasks();
+}
+
+function cancelModifiedTask(id){
+    showTasks();
 }
 
 function generationID(){
@@ -85,16 +129,44 @@ function generationID(){
 function createTaskCardStructure(task){
     return `
             <div class="container-task-card">
-                <div class="container-card-input">
-                    <input type="checkbox"  id="input-checkbox"/>
-                    <label id="task-name" for="input-checkbox">${task.name}</label>
+                <div class="container-card-input" id="container-card-input-${task.id}">
+                    <input type="checkbox"  id="input-checkbox-${task.id}" onchange="dashCheckbox(${task.id})"/>
+                    <label id="task-${task.id}" for="input-checkbox">${task.name}</label>
                 </div>
                 <div class="container-card-btn">
-                    <button onclick="deleteButton(${task.id})" class="delete-btn">Apagar</button>
-                    <button onclick="editButton(${task.id})" class="edit-btn">Editar</button>
+                    <button id="task-delete-btn-${task.id}" onclick="deleteButton(${task.id})" class="delete-btn">Apagar</button>
+                    <button id="task-edit-btn-${task.id}" onclick="editButton(${task.id})" class="edit-btn">Editar</button>
                  </div>
             </div>
         `;
+}
+
+function dashCheckbox(taskID){
+    let checkbox = document.getElementById(`input-checkbox-${taskID}`);
+    let tasks = JSON.parse(localStorage.getItem("tasks"));
+    let taskIndex = tasks.findIndex((task) =>{
+        return task.id === taskID;
+    });
+    if (checkbox.checked) {
+        tasks[taskIndex].checked = true;
+        localStorage.setItem("tasks",JSON.stringify(tasks));
+        showTasks();
+        return;
+    }
+    tasks[taskIndex].checked = false;
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+    showTasks();
+}
+
+function checkboxTask(task){
+    let taskLabel = document.getElementById(`task-${task.id}`);
+    let checkbox = document.getElementById(`input-checkbox-${task.id}`);
+    checkbox.checked = task.checked;
+    if (task.checked) {
+        taskLabel.innerHTML = `<del>${taskLabel.textContent}</del>`;
+        return;
+    }
+    taskLabel.innerHTML = taskLabel.textContent;
 }
 
 function deleteButton(taskID){
@@ -105,5 +177,6 @@ function deleteButton(taskID){
 function editButton(taskID){
     editTask(taskID);
 }
+
 
 
