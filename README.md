@@ -1,4 +1,7 @@
 # To-do List
+
+<img src="https://i.ibb.co/HgF0Ndz/Screenshot-from-2024-09-27-15-23-43.png"></img>
+
 A simple To-Do List application built with HTML, CSS, and JavaScript that allows users to add, edit, mark as completed, and delete tasks. Tasks are stored in the browser's LocalStorage, ensuring they persist even after the page is refreshed.
 
 ## Features
