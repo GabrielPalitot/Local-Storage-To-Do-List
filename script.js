@@ -11,8 +11,22 @@ btnAddTask.addEventListener("click", addTask);
 let tasks = [];
 
 function showTasks(){
-    
+    let taskCardStructure = `
+            <div class="task-card-container">
+                <div class="container-card-input">
+                    <input type="checkbox" />
+                    <span>Nome da Tarefa</span>
+                </div>
+                <div>
+                    <button>Deletar</button>
+                    <button>Editar</button>
+                 </div>
+            </div>
+        `
+        elementContainer.innerHTML += taskCardStructure;
 }
+
+showTasks();
 
 function addTask(){
     if(!verifyInputText()){

@@ -79,3 +79,25 @@ main{
     font-size: 0.8rem;
     text-align: start;
 }
+
+.container-elements{
+    width: 100%;
+}
+
+
+.task-card-container{
+    height: fit-content;
+    width: 100%;
+    margin-top: 0.4rem;
+    background-color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-radius: 0.4rem;
+}
+
+.task-card-container{
+    display: flex;
+    gap: 1rem;
+}
