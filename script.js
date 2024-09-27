@@ -8,34 +8,25 @@ const containerError = document.getElementById("container-error");
 
 btnAddTask.addEventListener("click", addTask);
 
-let tasks = [];
 
 function showTasks(){
-    let taskCardStructure = `
-            <div class="task-card-container">
-                <div class="container-card-input">
-                    <input type="checkbox" />
-                    <span>Nome da Tarefa</span>
-                </div>
-                <div>
-                    <button>Deletar</button>
-                    <button>Editar</button>
-                 </div>
-            </div>
-        `
+    elementContainer.innerHTML = "";
+    let tasks = JSON.parse(localStorage.getItem("tasks"));
+    tasks.forEach(task => {
+        taskCardStructure = createTaskCardStructure(task);
         elementContainer.innerHTML += taskCardStructure;
-}
-
+    });
+};
 showTasks();
 
 function addTask(){
     if(!verifyInputText()){
         return;
-    }
+    }    
     const taskData = {"id": generationID(), "name": inputText.value};
-    tasks.push(JSON.stringify(taskData));
-    localStorage.setItem("tasks",tasks);
+    saveTask(taskData);
     inputText.value = "";
+    showTasks();
 }
 
 function verifyInputText(){
@@ -55,8 +46,26 @@ function showErrorMessageInInputText(){
     containerError.appendChild(emptyTaskError);
 }
 
-function saveInLocalStorage(taskData){
+function saveTask(taskData){
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    tasks.push(taskData);
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+}
 
+function deleteTask(id){
+    let tasks = JSON.parse(localStorage.getItem("tasks"));
+    tasks = tasks.filter((task) => {
+        return task.id !== id;
+    });
+    localStorage.setItem("tasks",JSON.stringify(tasks));
+}
+
+function editTask(id){
+    let tasks = JSON.parse(localStorage.getItem("tasks"));
+    let editTask = tasks.filter((task) => {
+        return task.id === id;
+    });
+    console.log(editTask);
 }
 
 function generationID(){
@@ -69,6 +78,32 @@ function generationID(){
     id = +localStorage.getItem("id") + 1
     localStorage.setItem("id", id);
     return id;
+}
+
+
+
+function createTaskCardStructure(task){
+    return `
+            <div class="container-task-card">
+                <div class="container-card-input">
+                    <input type="checkbox"  id="input-checkbox"/>
+                    <label id="task-name" for="input-checkbox">${task.name}</label>
+                </div>
+                <div class="container-card-btn">
+                    <button onclick="deleteButton(${task.id})" class="delete-btn">Apagar</button>
+                    <button onclick="editButton(${task.id})" class="edit-btn">Editar</button>
+                 </div>
+            </div>
+        `;
+}
+
+function deleteButton(taskID){
+    deleteTask(taskID);
+    showTasks();
+}
+
+function editButton(taskID){
+    editTask(taskID);
 }
 
 
