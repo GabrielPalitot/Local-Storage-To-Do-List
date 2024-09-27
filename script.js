@@ -4,6 +4,7 @@ const btnAddTask = document.getElementById("btn-addTask");
 
 btnAddTask.addEventListener("click", addTask);
 
+showTasks();
 
 function showTasks(){
     elementContainer.innerHTML = "";
@@ -11,10 +12,9 @@ function showTasks(){
     tasks.forEach(task => {
         taskCardStructure = createTaskCardStructure(task);
         elementContainer.innerHTML += taskCardStructure;
-        checkboxTask(task);
     });
+    tasks.forEach(task => checkboxTask(task));
 };
-showTasks();
 
 function addTask(){
     const inputText = document.getElementById('input-task');
@@ -33,7 +33,6 @@ function verifyInputText(inputText, containerToAppend, id = ''){
     if (existingError) {
         existingError.remove();
     }
-    console.log(containerToAppend, inputText, id);
     if (inputText.value === "") {
         let containerError = document.createElement('div');
         containerError.id = `container-card-input-error-${id}`;
@@ -64,12 +63,6 @@ function deleteTask(id){
         return task.id !== id;
     });
     localStorage.setItem("tasks",JSON.stringify(tasks));
-}
-
-function editTask(id){
-    replaceLabelToInput(id);
-    replaceButton({"id":id,"msgHtml":"Salvar","button":"edit","nameClass":"edit-btn","signal":saveModifiedTask});
-    replaceButton({"id":id,"msgHtml":"Cancelar","button":"delete","nameClass":"delete-btn","signal":cancelModifiedTask});
 }
 
 function replaceLabelToInput(id){
@@ -144,17 +137,9 @@ function createTaskCardStructure(task){
 function dashCheckbox(taskID){
     let checkbox = document.getElementById(`input-checkbox-${taskID}`);
     let tasks = JSON.parse(localStorage.getItem("tasks"));
-    let taskIndex = tasks.findIndex((task) =>{
-        return task.id === taskID;
-    });
-    if (checkbox.checked) {
-        tasks[taskIndex].checked = true;
-        localStorage.setItem("tasks",JSON.stringify(tasks));
-        showTasks();
-        return;
-    }
-    tasks[taskIndex].checked = false;
-    localStorage.setItem("tasks",JSON.stringify(tasks));
+    let taskIndex = tasks.findIndex((task) => task.id === taskID);
+    tasks[taskIndex].checked = checkbox.checked;
+    localStorage.setItem("tasks", JSON.stringify(tasks));
     showTasks();
 }
 
@@ -162,12 +147,9 @@ function checkboxTask(task){
     let taskLabel = document.getElementById(`task-${task.id}`);
     let checkbox = document.getElementById(`input-checkbox-${task.id}`);
     checkbox.checked = task.checked;
-    if (task.checked) {
-        taskLabel.innerHTML = `<del>${taskLabel.textContent}</del>`;
-        return;
-    }
-    taskLabel.innerHTML = taskLabel.textContent;
+    taskLabel.innerHTML = task.checked ? `<del>${task.name}</del>` : task.name;
 }
+
 
 function deleteButton(taskID){
     deleteTask(taskID);
@@ -175,7 +157,9 @@ function deleteButton(taskID){
 }
 
 function editButton(taskID){
-    editTask(taskID);
+    replaceLabelToInput(taskID);
+    replaceButton({"id":taskID,"msgHtml":"Salvar","button":"edit","nameClass":"edit-btn","signal":saveModifiedTask});
+    replaceButton({"id":taskID,"msgHtml":"Cancelar","button":"delete","nameClass":"delete-btn","signal":cancelModifiedTask});
 }
 
 
