@@ -123,7 +123,7 @@ function createTaskCardStructure(task){
     return `
             <div class="container-task-card">
                 <div class="container-card-input" id="container-card-input-${task.id}">
-                    <input type="checkbox"  id="input-checkbox-${task.id}" onchange="dashCheckbox(${task.id})"/>
+                    <input class="input-checkbox" type="checkbox"  id="input-checkbox-${task.id}" onchange="dashCheckbox(${task.id})"/>
                     <label id="task-${task.id}" for="input-checkbox">${task.name}</label>
                 </div>
                 <div class="container-card-btn">
