@@ -8,13 +8,23 @@
     font-family: 'Roboto', sans-serif;
 }
 
+:root{
+    --background-primary: #ddffff;
+    --background-main: #c2fafc;
+    --btn-info: #006bc8;
+    --btn-success: #28a745;
+    --btn-danger: #e53e3e;
+
+}
+
 body{
-    background-color: #f1f1f1;
+    background-color: var(--background-primary);
     min-width: 250px;
 }
 
 main{
-    margin: 20rem auto;
+    background-color: var(--background-main);
+    margin: 10rem auto;
     height: 1000px;
     width: 100%;
     max-width: 992px;
@@ -59,13 +69,21 @@ main{
 }
 
 .btn-addTask{
-    background-color: rgb(21, 255, 0);
+    background-color:var(--btn-success);
     padding: 1rem;
     border-radius: 0.4rem;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-    font-weight: 500;
+    font-weight: 400;
     font-size: 0.8rem;
     cursor: pointer;
+    color: #ffffff;
+}
+
+.btn-addTask:hover{
+  transform: scale(1.02);
+  color: var(--btn-success);
+  background-color: #ffffff;
+  border: 1px solid var(--btn-success);   
 }
 
 .divider{
@@ -74,9 +92,6 @@ main{
     border-top: 3px solid #bbb ;
 }
 
-.btn-addTask:hover{
-  transform: scale(1.02);   
-}
 
 .empty-task-error{
     display: flex;
@@ -137,23 +152,35 @@ main{
 }
 
 .delete-btn{
-    background-color: #d9534f;
+    background-color: var(--btn-danger);
+    color: #ffffff;
 
 }
 
 .edit-btn{
-    background-color: #0275d8;
+    color: #ffffff;
+    background-color: var(--btn-info);
 }
 
-.edit-btn:hover, .delete-btn:hover{ 
+.edit-btn:hover{ 
     transform: scale(1.02); 
+    background-color: #ffffff;
+    color: var(--btn-info);
+    border: 1px solid var(--btn-info);
+}
+
+.delete-btn:hover{
+    transform: scale(1.02); 
+    background-color: #ffffff;
+    color: var(--btn-danger);
+    border: 1px solid var(--btn-danger);
 }
 
 .task-edit-input{
     border: 1px solid #f1f1f1;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     cursor: text;
-    padding: 0.4rem;
+    padding: 0.8rem;
     border-radius: 0.4rem;
 }
 

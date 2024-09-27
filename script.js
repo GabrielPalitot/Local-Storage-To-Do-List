@@ -124,7 +124,7 @@ function createTaskCardStructure(task){
             <div class="container-task-card">
                 <div class="container-card-input" id="container-card-input-${task.id}">
                     <input class="input-checkbox" type="checkbox"  id="input-checkbox-${task.id}" onchange="dashCheckbox(${task.id})"/>
-                    <label id="task-${task.id}" for="input-checkbox">${task.name}</label>
+                    <label id="task-${task.id}" for="input-checkbox-${task.id}">${task.name}</label>
                 </div>
                 <div class="container-card-btn">
                     <button id="task-delete-btn-${task.id}" onclick="deleteButton(${task.id})" class="delete-btn">Apagar</button>
